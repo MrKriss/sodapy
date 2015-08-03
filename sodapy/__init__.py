@@ -18,7 +18,7 @@ __author__ = "Cristina Munoz <hi@xmunoz.com>"
 
 class Socrata(object):
     def __init__(self, domain, app_token, username=None, password=None,
-                 access_token=None, session_adapter=None):
+                 access_token=None, session_adapter=None, timeout=10):
         '''
         The required arguments are:
             domain: the domain you wish you to access
@@ -69,6 +69,9 @@ class Socrata(object):
             self.uri_prefix = session_adapter["prefix"]
         else:
             self.uri_prefix = "https"
+
+        # The timeout for requests
+        self.timeout = timeout
 
     def authentication_validation(self, username, password, access_token):
         '''
@@ -193,7 +196,7 @@ class Socrata(object):
         uri = "{0}://{1}{2}".format(self.uri_prefix, self.domain, resource)
 
         # set a timeout, just to be safe
-        kwargs["timeout"] = 10
+        kwargs["timeout"] = self.timeout
 
         response = getattr(self.session, request_type)(uri, **kwargs)
 
